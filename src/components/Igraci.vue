@@ -6,7 +6,7 @@ import MojaEkipa from "./MojaEkipa.vue";
 
 const props = defineProps(["klub"]);
 const igraci = ref([]);
-const odabraniIgraci = ref([{}]);
+const odabraniIgraci = ref([]);
 
 async function loadPlayers() {
   const q = query(collection(db, "players"), orderBy("Pozicija"));
@@ -31,8 +31,6 @@ async function loadPlayers() {
 
 onMounted(loadPlayers);
 
-console.log(igraci);
-
 const filtriraniIgraci = computed(() =>
   igraci.value.filter((i) => i.klubId === props.klub)
 );
@@ -49,32 +47,49 @@ const klubBrojac = {
   slaven: 0,
   varaždin: 0,
 };
+
 function dodajIgraca(igrac) {
   const { klubId } = igrac;
+
+  const postoji = odabraniIgraci.value.find((i) => i.id === igrac.id);
+  if (postoji) return;
 
   if (klubId in klubBrojac) {
     if (klubBrojac[klubId] > 2) return;
     klubBrojac[klubId]++;
     console.log(`${klubId} =`, klubBrojac[klubId]);
   }
-  if (klubBrojac[klubId] > 3) return;
-
-  const postoji = odabraniIgraci.value.find((i) => i.id === igrac.id);
-  if (postoji) return;
   odabraniIgraci.value.push(igrac);
+}
+
+function isIgracDodan(id) {
+  return odabraniIgraci.value.some((i) => i.id === id);
+}
+
+function ukloniIgraca(igrac) {
+  console.log("igrac:", igrac);
+  const indeks = odabraniIgraci.value.findIndex((i) => igrac.id === i.id);
+  odabraniIgraci.value.splice(indeks, 1);
+  const { klubId } = igrac;
+  klubBrojac[klubId]--;
+  console.log(`${klubId} =`, klubBrojac[klubId]);
 }
 </script>
 
 <template>
   <div class="h-full flex flex-col justify-center items-center gap-2 mt-2 p-4">
-    <MojaEkipa :odabrani-igraci="odabraniIgraci">
+    <MojaEkipa :odabrani-igraci="odabraniIgraci" @ukloni-igraca="ukloniIgraca">
       <div v-if="klub" class="flex flex-col gap-2">
         <ol class="border bg-gray-100 p-4 rounded-lg text-gray-700">
           <li v-for="i in filtriraniIgraci" :key="i.id">
             <span
               v-if="i.pozicija == 'GK'"
-              @click="dodajIgraca(i)"
-              class="cursor-pointer"
+              @click="!isIgracDodan(i.id) && dodajIgraca(i)"
+              :class="[
+                isIgracDodan(i.id)
+                  ? 'text-gray-400 cursor-not-allowed'
+                  : 'text-black cursor-pointer',
+              ]"
               >{{ i.ime }} {{ i.pozicija }} {{ i.cijena }}M €</span
             >
           </li>
@@ -83,8 +98,12 @@ function dodajIgraca(igrac) {
           <li v-for="i in filtriraniIgraci" :key="i.id">
             <span
               v-if="i.pozicija == 'DEF'"
-              @click="dodajIgraca(i)"
-              class="cursor-pointer"
+              @click="!isIgracDodan(i.id) && dodajIgraca(i)"
+              :class="[
+                isIgracDodan(i.id)
+                  ? 'text-gray-400 cursor-not-allowed'
+                  : 'text-black cursor-pointer',
+              ]"
               >{{ i.ime }} {{ i.pozicija }} {{ i.cijena }}M €</span
             >
           </li>
@@ -93,8 +112,12 @@ function dodajIgraca(igrac) {
           <li v-for="i in filtriraniIgraci" :key="i.id">
             <span
               v-if="i.pozicija == 'MID'"
-              @click="dodajIgraca(i)"
-              class="cursor-pointer"
+              @click="!isIgracDodan(i.id) && dodajIgraca(i)"
+              :class="[
+                isIgracDodan(i.id)
+                  ? 'text-gray-400 cursor-not-allowed'
+                  : 'text-black cursor-pointer',
+              ]"
               >{{ i.ime }} {{ i.pozicija }} {{ i.cijena }}M €</span
             >
           </li>
@@ -103,8 +126,12 @@ function dodajIgraca(igrac) {
           <li v-for="i in filtriraniIgraci" :key="i.id">
             <span
               v-if="i.pozicija == 'FWD'"
-              @click="dodajIgraca(i)"
-              class="cursor-pointer"
+              @click="!isIgracDodan(i.id) && dodajIgraca(i)"
+              :class="[
+                isIgracDodan(i.id)
+                  ? 'text-gray-400 cursor-not-allowed'
+                  : 'text-black cursor-pointer',
+              ]"
               >{{ i.ime }} {{ i.pozicija }} {{ i.cijena }}M €</span
             >
           </li>
