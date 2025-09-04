@@ -7,6 +7,8 @@ import MojaEkipa from "./MojaEkipa.vue";
 const props = defineProps(["klub"]);
 const igraci = ref([]);
 const odabraniIgraci = ref([]);
+const brojIgraca = ref(0);
+const budzet = ref(0);
 
 async function loadPlayers() {
   const q = query(collection(db, "players"), orderBy("Pozicija"));
@@ -39,26 +41,49 @@ const klubBrojac = {
   dinamo: 0,
   hajduk: 0,
   rijeka: 0,
-  iIstra: 0,
+  istra: 0,
   lokomotiva: 0,
   gorica: 0,
   vukovar: 0,
   osijek: 0,
   slaven: 0,
-  varaždin: 0,
+  varazdin: 0,
+};
+
+const brojacPozicija = {
+  GK: 0,
+  DEF: 0,
+  MID: 0,
+  FWD: 0,
 };
 
 function dodajIgraca(igrac) {
-  const { klubId } = igrac;
+  const { klubId, cijena, pozicija } = igrac;
+
+  if (pozicija in brojacPozicija) {
+    if (pozicija == "GK" && brojacPozicija[pozicija] > 1) return;
+    if (pozicija == "DEF" && brojacPozicija[pozicija] > 4) return;
+    if (pozicija == "MID" && brojacPozicija[pozicija] > 4) return;
+    if (pozicija == "FWD" && brojacPozicija[pozicija] > 2) return;
+  }
 
   const postoji = odabraniIgraci.value.find((i) => i.id === igrac.id);
   if (postoji) return;
+
+  if (brojIgraca.value >= 15) return;
 
   if (klubId in klubBrojac) {
     if (klubBrojac[klubId] > 2) return;
     klubBrojac[klubId]++;
     console.log(`${klubId} =`, klubBrojac[klubId]);
   }
+  brojIgraca.value++;
+
+  brojacPozicija[pozicija]++;
+  console.log(`${pozicija} =`, brojacPozicija[pozicija]);
+  budzet.value = parseFloat((budzet.value + cijena).toFixed(1));
+  console.log("broj:", brojIgraca.value);
+  console.log("budzet:", budzet.value);
   odabraniIgraci.value.push(igrac);
 }
 
@@ -70,15 +95,27 @@ function ukloniIgraca(igrac) {
   console.log("igrac:", igrac);
   const indeks = odabraniIgraci.value.findIndex((i) => igrac.id === i.id);
   odabraniIgraci.value.splice(indeks, 1);
-  const { klubId } = igrac;
+  const { klubId, cijena, pozicija } = igrac;
   klubBrojac[klubId]--;
+  brojIgraca.value--;
+  budzet.value = parseFloat((budzet.value - cijena).toFixed(1));
+  brojacPozicija[pozicija]--;
+
+  console.log(`${pozicija} =`, brojacPozicija[pozicija]);
+  console.log("broj:", brojIgraca.value);
   console.log(`${klubId} =`, klubBrojac[klubId]);
+  console.log("budzet:", budzet.value);
 }
 </script>
 
 <template>
   <div class="h-full flex flex-col justify-center items-center gap-2 mt-2 p-4">
-    <MojaEkipa :odabrani-igraci="odabraniIgraci" @ukloni-igraca="ukloniIgraca">
+    <MojaEkipa
+      :odabrani-igraci="odabraniIgraci"
+      :broj-igraca="brojIgraca"
+      :budzet="budzet"
+      @ukloni-igraca="ukloniIgraca"
+    >
       <div v-if="klub" class="flex flex-col gap-2">
         <ol class="border bg-gray-100 p-4 rounded-lg text-gray-700">
           <li v-for="i in filtriraniIgraci" :key="i.id">

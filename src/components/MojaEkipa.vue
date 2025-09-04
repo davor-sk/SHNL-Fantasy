@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from "vue";
 
-const props = defineProps(["odabraniIgraci"]);
+const props = defineProps(["odabraniIgraci", "brojIgraca", "budzet"]);
 </script>
 
 <template>
@@ -11,6 +11,10 @@ const props = defineProps(["odabraniIgraci"]);
       class="flex flex-col border bg-gray-100 p-4 rounded-lg text-gray-700"
       v-if="odabraniIgraci.length > 0"
     >
+      {{ brojIgraca }}/15
+      <span :class="budzet > 100 ? 'text-red-600' : 'text-gray-700'"
+        >{{ budzet }}/100M€</span
+      >
       <div v-for="i in odabraniIgraci" :key="i.id">
         {{ i.ime }}
         <button
