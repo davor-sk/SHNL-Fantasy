@@ -3,6 +3,8 @@ import { ref, onMounted, computed } from "vue";
 import { db } from "@/firebase";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
 import MojaEkipa from "./MojaEkipa.vue";
+import { useAuthStore } from "@/stores/auth.js";
+const { user } = useAuthStore();
 
 const props = defineProps(["klub"]);
 const igraci = ref([]);
@@ -109,71 +111,72 @@ function ukloniIgraca(igrac) {
 </script>
 
 <template>
-  <div class="h-full flex flex-col justify-center items-center gap-2 mt-2 p-4">
-    <MojaEkipa
-      :odabrani-igraci="odabraniIgraci"
-      :broj-igraca="brojIgraca"
-      :budzet="budzet"
-      @ukloni-igraca="ukloniIgraca"
-    >
-      <div v-if="klub" class="flex flex-col gap-2">
-        <ol class="border bg-gray-100 p-4 rounded-lg text-gray-700">
-          <li v-for="i in filtriraniIgraci" :key="i.id">
-            <span
-              v-if="i.pozicija == 'GK'"
-              @click="!isIgracDodan(i.id) && dodajIgraca(i)"
-              :class="[
-                isIgracDodan(i.id)
-                  ? 'text-gray-400 cursor-not-allowed'
-                  : 'text-black cursor-pointer',
-              ]"
-              >{{ i.ime }} {{ i.pozicija }} {{ i.cijena }}M €</span
-            >
-          </li>
-        </ol>
-        <ol class="border bg-gray-100 p-4 rounded-lg text-gray-700">
-          <li v-for="i in filtriraniIgraci" :key="i.id">
-            <span
-              v-if="i.pozicija == 'DEF'"
-              @click="!isIgracDodan(i.id) && dodajIgraca(i)"
-              :class="[
-                isIgracDodan(i.id)
-                  ? 'text-gray-400 cursor-not-allowed'
-                  : 'text-black cursor-pointer',
-              ]"
-              >{{ i.ime }} {{ i.pozicija }} {{ i.cijena }}M €</span
-            >
-          </li>
-        </ol>
-        <ol class="border bg-gray-100 p-4 rounded-lg text-gray-700">
-          <li v-for="i in filtriraniIgraci" :key="i.id">
-            <span
-              v-if="i.pozicija == 'MID'"
-              @click="!isIgracDodan(i.id) && dodajIgraca(i)"
-              :class="[
-                isIgracDodan(i.id)
-                  ? 'text-gray-400 cursor-not-allowed'
-                  : 'text-black cursor-pointer',
-              ]"
-              >{{ i.ime }} {{ i.pozicija }} {{ i.cijena }}M €</span
-            >
-          </li>
-        </ol>
-        <ol class="border bg-gray-100 p-4 rounded-lg text-gray-700">
-          <li v-for="i in filtriraniIgraci" :key="i.id">
-            <span
-              v-if="i.pozicija == 'FWD'"
-              @click="!isIgracDodan(i.id) && dodajIgraca(i)"
-              :class="[
-                isIgracDodan(i.id)
-                  ? 'text-gray-400 cursor-not-allowed'
-                  : 'text-black cursor-pointer',
-              ]"
-              >{{ i.ime }} {{ i.pozicija }} {{ i.cijena }}M €</span
-            >
-          </li>
-        </ol>
-      </div>
-    </MojaEkipa>
+  <div class="flex flex-col md:flex-row gap-8 pt-6">
+    <div v-if="klub" class="flex flex-col gap-4 w-136">
+      <ol class="border bg-gray-100 p-4 rounded-lg text-gray-700">
+        <li v-for="i in filtriraniIgraci" :key="i.id">
+          <span
+            v-if="i.pozicija == 'GK'"
+            @click="!isIgracDodan(i.id) && dodajIgraca(i)"
+            :class="[
+              isIgracDodan(i.id)
+                ? 'text-gray-400 cursor-not-allowed'
+                : 'text-black cursor-pointer',
+            ]"
+            >{{ i.ime }} {{ i.pozicija }} {{ i.cijena }}M €</span
+          >
+        </li>
+      </ol>
+      <ol class="border bg-gray-100 p-4 rounded-lg text-gray-700">
+        <li v-for="i in filtriraniIgraci" :key="i.id">
+          <span
+            v-if="i.pozicija == 'DEF'"
+            @click="!isIgracDodan(i.id) && dodajIgraca(i)"
+            :class="[
+              isIgracDodan(i.id)
+                ? 'text-gray-400 cursor-not-allowed'
+                : 'text-black cursor-pointer',
+            ]"
+            >{{ i.ime }} {{ i.pozicija }} {{ i.cijena }}M €</span
+          >
+        </li>
+      </ol>
+      <ol class="border bg-gray-100 p-4 rounded-lg text-gray-700">
+        <li v-for="i in filtriraniIgraci" :key="i.id">
+          <span
+            v-if="i.pozicija == 'MID'"
+            @click="!isIgracDodan(i.id) && dodajIgraca(i)"
+            :class="[
+              isIgracDodan(i.id)
+                ? 'text-gray-400 cursor-not-allowed'
+                : 'text-black cursor-pointer',
+            ]"
+            >{{ i.ime }} {{ i.pozicija }} {{ i.cijena }}M €</span
+          >
+        </li>
+      </ol>
+      <ol class="border bg-gray-100 p-4 rounded-lg text-gray-700">
+        <li v-for="i in filtriraniIgraci" :key="i.id">
+          <span
+            v-if="i.pozicija == 'FWD'"
+            @click="!isIgracDodan(i.id) && dodajIgraca(i)"
+            :class="[
+              isIgracDodan(i.id)
+                ? 'text-gray-400 cursor-not-allowed'
+                : 'text-black cursor-pointer',
+            ]"
+            >{{ i.ime }} {{ i.pozicija }} {{ i.cijena }}M €</span
+          >
+        </li>
+      </ol>
+    </div>
+    <div class="w-full md:w-1/2">
+      <MojaEkipa
+        :odabrani-igraci="odabraniIgraci"
+        :broj-igraca="brojIgraca"
+        :budzet="budzet"
+        @ukloni-igraca="ukloniIgraca"
+      />
+    </div>
   </div>
 </template>

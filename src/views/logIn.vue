@@ -1,11 +1,14 @@
 <script setup>
 import { ref } from "vue";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/firebase.js";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { setDoc, doc } from "firebase/firestore";
+import { auth, db } from "@/firebase.js";
 
 const email = ref("");
 const password = ref("");
+const displayName = ref("");
 const response = ref({ error: false, message: "" });
+
 const register = async () => {
   try {
     const userCredential = await createUserWithEmailAndPassword(
@@ -13,6 +16,17 @@ const register = async () => {
       email.value,
       password.value
     );
+
+    await updateProfile(userCredential.user, {
+      displayName: displayName.value,
+    });
+
+    await setDoc(doc(db, "users", userCredential.user.uid), {
+      email: email.value,
+      displayName: displayName.value,
+      role: "user",
+    });
+
     response.value.error = false;
     response.value.message = "Korisnik registriran!";
   } catch (error) {
@@ -49,19 +63,25 @@ function uvijeti() {
 </script>
 
 <template>
-  <div class="flex justify-center items-center h-full mt-4">
+  <div class="flex justify-center items-center h-screen mt-4">
     <form @submit.prevent="register">
       <div class="flex flex-col gap-1 w-96">
         <h2 class="text-xl font-bold mb-2">Registracija</h2>
         <input
           v-model="email"
-          class="border rounded p-2"
+          class="border rounded p-2 bg-white"
           type="email"
           placeholder="Unesite mail adresu"
         />
         <input
+          v-model="displayName"
+          class="border rounded p-2 bg-white"
+          type="text"
+          placeholder="Unesite korisničko ime"
+        />
+        <input
           v-model="password"
-          class="border rounded p-2"
+          class="border rounded p-2 bg-white"
           type="password"
           placeholder="Unesite lozinku"
         />

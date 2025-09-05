@@ -1,12 +1,15 @@
 import "./assets/main.css";
 
 import { createApp } from "vue";
-import App from "./App.vue";
 import { createPinia } from "pinia";
-import "./firebase.js";
-
 import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
+import App from "./App.vue";
+import "./firebase.js";
+import router from "./router";
+
 const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate);
-
-createApp(App).mount("#app");
+const app = createApp(App);
+app.use(router);
+app.use(pinia);
+app.mount("#app");
