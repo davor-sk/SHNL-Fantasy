@@ -1,16 +1,61 @@
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, watch } from "vue";
 import { db } from "@/firebase";
-import { collection, getDocs, query, orderBy } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  query,
+  orderBy,
+  doc,
+  getDoc,
+} from "firebase/firestore";
 import MojaEkipa from "./MojaEkipa.vue";
 import { useAuthStore } from "@/stores/auth.js";
-const { user } = useAuthStore();
+import { storeToRefs } from "pinia";
+const authStore = useAuthStore();
+const { user } = storeToRefs(authStore);
 
 const props = defineProps(["klub"]);
 const igraci = ref([]);
 const odabraniIgraci = ref([]);
 const brojIgraca = ref(0);
 const budzet = ref(0);
+const mojaOdabranaEkipa = ref("");
+let klubBrojac = ref("");
+let brojacPozicija = ref("");
+
+watch(
+  user,
+  async (u, prev) => {
+    if (u && !prev) {
+      await loadTeam(u.uid);
+      console.log("korisnik:", u.uid);
+      console.log("teamName:", mojaOdabranaEkipa.value?.teamName);
+    }
+  },
+  { immediate: true }
+);
+
+async function loadTeam(uid) {
+  const q = doc(db, "ekipe", uid);
+  const snap = await getDoc(q);
+  if (snap.exists()) {
+    console.log("data:", snap.data());
+    const data = snap.data();
+    mojaOdabranaEkipa.value = {
+      id: snap.id,
+      teamName: data.teamName,
+      budzetUsed: data.budzetUsed,
+      displayName: data.displayName,
+      igraci: data.igraci,
+      brojPozicija: data.brojPozicija,
+      brojacKlubova: data.brojacKlubova,
+    };
+  } else {
+    console.log("no data:");
+    mojaOdabranaEkipa.value = null;
+  }
+}
 
 async function loadPlayers() {
   const q = query(collection(db, "players"), orderBy("Pozicija"));
@@ -39,7 +84,7 @@ const filtriraniIgraci = computed(() =>
   igraci.value.filter((i) => i.klubId === props.klub)
 );
 
-const klubBrojac = {
+klubBrojac = {
   dinamo: 0,
   hajduk: 0,
   rijeka: 0,
@@ -52,7 +97,7 @@ const klubBrojac = {
   varazdin: 0,
 };
 
-const brojacPozicija = {
+brojacPozicija = {
   GK: 0,
   DEF: 0,
   MID: 0,
@@ -61,6 +106,8 @@ const brojacPozicija = {
 
 function dodajIgraca(igrac) {
   const { klubId, cijena, pozicija } = igrac;
+  const useSaved = Boolean(mojaOdabranaEkipa.value);
+  console.log("saved", useSaved);
 
   if (pozicija in brojacPozicija) {
     if (pozicija == "GK" && brojacPozicija[pozicija] > 1) return;
@@ -70,27 +117,52 @@ function dodajIgraca(igrac) {
   }
 
   const postoji = odabraniIgraci.value.find((i) => i.id === igrac.id);
-  if (postoji) return;
+  const postojiMojaEkipa = mojaOdabranaEkipa.value?.igraci.find(
+    (i) => i.id === igrac.id
+  );
 
-  if (brojIgraca.value >= 15) return;
+  if (postoji || postojiMojaEkipa) return;
 
-  if (klubId in klubBrojac) {
-    if (klubBrojac[klubId] > 2) return;
-    klubBrojac[klubId]++;
-    console.log(`${klubId} =`, klubBrojac[klubId]);
+  if (brojIgraca.value >= 15 || mojaOdabranaEkipa.value?.igraci.length >= 15)
+    return;
+
+  if (!useSaved) {
+    if (klubId in klubBrojac) {
+      if (klubBrojac[klubId] > 2) return;
+      klubBrojac[klubId]++;
+      console.log(`${klubId} =`, klubBrojac[klubId]);
+    }
+    brojIgraca.value++;
+    brojacPozicija[pozicija]++;
+    console.log(`${pozicija} =`, brojacPozicija[pozicija]);
+    budzet.value = parseFloat((budzet.value + cijena).toFixed(1));
+    console.log("broj:", brojIgraca.value);
+    console.log("budzet:", budzet.value);
+    odabraniIgraci.value.push(igrac);
+  } else {
+    if (klubId in klubBrojac) {
+      if (mojaOdabranaEkipa.value.brojacKlubova[klubId] > 2) return;
+      mojaOdabranaEkipa.value.brojacKlubova[klubId]++;
+      console.log(`${klubId} =`, mojaOdabranaEkipa.value.brojacKlubova[klubId]);
+    }
+    mojaOdabranaEkipa.value.brojPozicija[pozicija]++;
+    console.log(
+      `${pozicija} =`,
+      mojaOdabranaEkipa.value.brojPozicija[pozicija]
+    );
+    mojaOdabranaEkipa.value.budzetUsed = parseFloat(
+      (mojaOdabranaEkipa.value.budzetUsed + cijena).toFixed(1)
+    );
+    mojaOdabranaEkipa.value.igraci.push(igrac);
   }
-  brojIgraca.value++;
-
-  brojacPozicija[pozicija]++;
-  console.log(`${pozicija} =`, brojacPozicija[pozicija]);
-  budzet.value = parseFloat((budzet.value + cijena).toFixed(1));
-  console.log("broj:", brojIgraca.value);
-  console.log("budzet:", budzet.value);
-  odabraniIgraci.value.push(igrac);
 }
 
+const currentList = computed(
+  () => mojaOdabranaEkipa.value?.igraci ?? odabraniIgraci.value
+);
+
 function isIgracDodan(id) {
-  return odabraniIgraci.value.some((i) => i.id === id);
+  return currentList.value.some((p) => p.id === id);
 }
 
 function ukloniIgraca(igrac) {
@@ -107,6 +179,25 @@ function ukloniIgraca(igrac) {
   console.log("broj:", brojIgraca.value);
   console.log(`${klubId} =`, klubBrojac[klubId]);
   console.log("budzet:", budzet.value);
+}
+
+function ukloniOdabranogIgraca(igrac) {
+  console.log("Odabraniigrac:", igrac.id);
+  const indeks = mojaOdabranaEkipa.value.igraci.findIndex(
+    (i) => igrac.id === i.id
+  );
+  mojaOdabranaEkipa.value.igraci.splice(indeks, 1);
+  const { klubId, cijena, pozicija } = igrac;
+
+  mojaOdabranaEkipa.value.brojacKlubova[klubId]--;
+  mojaOdabranaEkipa.value.budzetUsed = parseFloat(
+    (mojaOdabranaEkipa.value.budzetUsed - cijena).toFixed(1)
+  );
+  mojaOdabranaEkipa.value.brojPozicija[pozicija]--;
+
+  console.log(`${pozicija} =`, mojaOdabranaEkipa.value.brojPozicija[pozicija]);
+  console.log(`${klubId} =`, mojaOdabranaEkipa.value.brojacKlubova[klubId]);
+  console.log("budzet:", mojaOdabranaEkipa.value.budzetUsed);
 }
 </script>
 
@@ -172,10 +263,14 @@ function ukloniIgraca(igrac) {
     </div>
     <div class="w-full md:w-1/2">
       <MojaEkipa
+        :moja-odabrana-ekipa="mojaOdabranaEkipa"
         :odabrani-igraci="odabraniIgraci"
         :broj-igraca="brojIgraca"
         :budzet="budzet"
+        :klub-brojac="klubBrojac"
+        :brojac-pozicija="brojacPozicija"
         @ukloni-igraca="ukloniIgraca"
+        @ukloni-odabranog-igraca="ukloniOdabranogIgraca"
       />
     </div>
   </div>

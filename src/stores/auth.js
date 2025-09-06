@@ -28,5 +28,5 @@ export const useAuthStore = defineStore("auth", () => {
     user.value = null;
   }
 
-  return { user, logout, role };
+  return { user, logout, role, loading };
 });

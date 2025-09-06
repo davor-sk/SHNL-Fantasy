@@ -11,10 +11,6 @@ console.log("role:", role);
 const klubovi = ref([]);
 const klub = ref("");
 
-const logout = async () => {
-  await authStore.logout();
-};
-
 async function loadClubs() {
   const q = query(collection(db, "clubs"), orderBy("Ime"));
   const snap = await getDocs(q);
@@ -36,15 +32,6 @@ onMounted(loadClubs);
     <h1 class="text-3xl font-bold text-gray-800">Odaberite igrače</h1>
     <div class="w-full flex justify-between">
       <div>
-        <div v-if="authStore.loading">
-          <p>Učitavanje korisnika...</p>
-        </div>
-        <div v-else>
-          <p v-if="!authStore.user">Nema prijavljenog korisnika!</p>
-          <p v-else>Prijavljen korisnik: {{ authStore.user.email }}</p>
-        </div>
-        <button @click="logout">Odjavi se</button>
-
         <div class="w-full max-w-md flex flex-col gap-2">
           <label for="klub" class="text-black font-medium">Odaberi klub:</label>
           <select

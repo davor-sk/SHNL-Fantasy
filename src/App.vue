@@ -1,5 +1,12 @@
 <script setup>
 import { RouterLink, RouterView } from "vue-router";
+import { useAuthStore } from "@/stores/auth.js";
+
+const authStore = useAuthStore();
+
+const logout = async () => {
+  await authStore.logout();
+};
 </script>
 
 <template>
@@ -9,9 +16,22 @@ import { RouterLink, RouterView } from "vue-router";
     <h1 class="text-3xl text-white font-bold">SHNL Fantasy</h1>
     <nav>
       <RouterLink to="/">Home</RouterLink>
-      <RouterLink to="/registracija">Registracija</RouterLink>
-      <RouterLink to="/prijava">Prijava</RouterLink>
       <RouterLink to="/biranje-ekipe">Biranje ekipe</RouterLink>
+      <span v-if="!authStore.user">
+        <RouterLink to="/registracija">Registracija</RouterLink>
+        <RouterLink to="/prijava">Prijava</RouterLink>
+      </span>
+      <span v-else-if="authStore.user">
+        <span class="text-white px-3 border-s">{{
+          authStore.user.displayName
+        }}</span>
+        <button
+          @click="logout"
+          class="text-white hover:text-black cursor-pointer border-s ps-3"
+        >
+          Odjavi se
+        </button>
+      </span>
     </nav>
   </div>
   <div
