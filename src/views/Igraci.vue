@@ -86,6 +86,22 @@ const filtriraniIgraci = computed(() =>
   igraci.value.filter((i) => i.klubId === props.klub)
 );
 
+const golmani = computed(() =>
+  filtriraniIgraci.value.filter((i) => i.pozicija === "GK")
+);
+
+const obrana = computed(() =>
+  filtriraniIgraci.value.filter((i) => i.pozicija === "DEF")
+);
+
+const vezni = computed(() =>
+  filtriraniIgraci.value.filter((i) => i.pozicija === "MID")
+);
+
+const napad = computed(() =>
+  filtriraniIgraci.value.filter((i) => i.pozicija === "FWD")
+);
+
 klubBrojac = {
   dinamo: 0,
   hajduk: 0,
@@ -204,66 +220,215 @@ function ukloniOdabranogIgraca(igrac) {
 </script>
 
 <template>
-  <div class="flex flex-col md:flex-row gap-8 pt-6">
-    <div v-if="klub" class="flex flex-col gap-4 w-136">
-      <ol class="border bg-gray-100 p-4 rounded-lg text-gray-700">
-        <li v-for="i in filtriraniIgraci" :key="i.id">
-          <span
-            v-if="i.pozicija == 'GK'"
-            @click="!isIgracDodan(i.id) && dodajIgraca(i)"
-            :class="[
-              isIgracDodan(i.id)
-                ? 'text-gray-400 cursor-not-allowed'
-                : 'text-black cursor-pointer',
-            ]"
-            >{{ i.ime }} {{ i.pozicija }} {{ i.cijena }}M € {{ i.bodovi }}</span
-          >
-        </li>
-      </ol>
-      <ol class="border bg-gray-100 p-4 rounded-lg text-gray-700">
-        <li v-for="i in filtriraniIgraci" :key="i.id">
-          <span
-            v-if="i.pozicija == 'DEF'"
-            @click="!isIgracDodan(i.id) && dodajIgraca(i)"
-            :class="[
-              isIgracDodan(i.id)
-                ? 'text-gray-400 cursor-not-allowed'
-                : 'text-black cursor-pointer',
-            ]"
-            >{{ i.ime }} {{ i.pozicija }} {{ i.cijena }}M € {{ i.bodovi }}</span
-          >
-        </li>
-      </ol>
-      <ol class="border bg-gray-100 p-4 rounded-lg text-gray-700">
-        <li v-for="i in filtriraniIgraci" :key="i.id">
-          <span
-            v-if="i.pozicija == 'MID'"
-            @click="!isIgracDodan(i.id) && dodajIgraca(i)"
-            :class="[
-              isIgracDodan(i.id)
-                ? 'text-gray-400 cursor-not-allowed'
-                : 'text-black cursor-pointer',
-            ]"
-            >{{ i.ime }} {{ i.pozicija }} {{ i.cijena }}M € {{ i.bodovi }}</span
-          >
-        </li>
-      </ol>
-      <ol class="border bg-gray-100 p-4 rounded-lg text-gray-700">
-        <li v-for="i in filtriraniIgraci" :key="i.id">
-          <span
-            v-if="i.pozicija == 'FWD'"
-            @click="!isIgracDodan(i.id) && dodajIgraca(i)"
-            :class="[
-              isIgracDodan(i.id)
-                ? 'text-gray-400 cursor-not-allowed'
-                : 'text-black cursor-pointer',
-            ]"
-            >{{ i.ime }} {{ i.pozicija }} {{ i.cijena }}M € {{ i.bodovi }}</span
-          >
-        </li>
-      </ol>
-    </div>
+  <div class="flex flex-col md:flex-row w-full mx-auto gap-8">
     <div class="w-full md:w-1/2">
+      <div v-if="klub" class="flex flex-col gap-4">
+        <div
+          class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow"
+        >
+          <div class="overflow-x-auto">
+            <table class="table-fixed min-w-full">
+              <colgroup>
+                <col class="w-1/2" />
+                <col class="w-1/6" />
+                <col class="w-1/6" />
+                <col class="w-1/6" />
+              </colgroup>
+              <thead class="bg-gray-50">
+                <tr class="text-xs font-semibold text-gray-600">
+                  <th class="px-4 py-3 text-left">IME</th>
+                  <th class="px-4 py-3 text-left">POZ</th>
+                  <th class="px-4 py-3 text-right">CIJENA</th>
+                  <th class="px-4 py-3 text-right">BODOVI</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200">
+                <tr
+                  v-for="i in golmani"
+                  :key="i.id"
+                  @click="!isIgracDodan(i.id) && dodajIgraca(i)"
+                  :class="[
+                    isIgracDodan(i.id)
+                      ? 'cursor-not-allowed opacity-60 pointer-events-none'
+                      : 'text-black cursor-pointer',
+                  ]"
+                  class="hover:bg-gray-50"
+                >
+                  <td class="px-4 py-2">
+                    <span class="font-medium text-gray-800">{{ i.ime }}</span>
+                  </td>
+                  <td class="px-4 py-2">
+                    <span
+                      class="items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700"
+                    >
+                      {{ i.pozicija }}
+                    </span>
+                  </td>
+                  <td class="px-4 py-2 text-right">{{ i.cijena }}M €</td>
+                  <td class="px-4 py-2 text-right">
+                    {{ i.bodovi }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div
+          class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow"
+        >
+          <div class="overflow-x-auto">
+            <table class="table-fixed min-w-full">
+              <colgroup>
+                <col class="w-1/2" />
+                <col class="w-1/6" />
+                <col class="w-1/6" />
+                <col class="w-1/6" />
+              </colgroup>
+              <thead class="bg-gray-50">
+                <tr class="text-xs font-semibold text-gray-600">
+                  <th class="px-4 py-3 text-left">IME</th>
+                  <th class="px-4 py-3 text-left">POZ</th>
+                  <th class="px-4 py-3 text-right">CIJENA</th>
+                  <th class="px-4 py-3 text-right">BODOVI</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200">
+                <tr
+                  v-for="i in obrana"
+                  :key="i.id"
+                  @click="!isIgracDodan(i.id) && dodajIgraca(i)"
+                  :class="[
+                    isIgracDodan(i.id)
+                      ? 'cursor-not-allowed opacity-60 pointer-events-none'
+                      : 'text-black cursor-pointer',
+                  ]"
+                  class="hover:bg-gray-50"
+                >
+                  <td class="px-4 py-2">
+                    <span class="font-medium text-gray-800">{{ i.ime }}</span>
+                  </td>
+                  <td class="px-4 py-2">
+                    <span
+                      class="items-center rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700"
+                    >
+                      {{ i.pozicija }}
+                    </span>
+                  </td>
+                  <td class="px-4 py-2 text-right">{{ i.cijena }}M €</td>
+                  <td class="px-4 py-2 text-right">
+                    {{ i.bodovi }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div
+          class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow"
+        >
+          <div class="overflow-x-auto">
+            <table class="table-fixed min-w-full">
+              <colgroup>
+                <col class="w-1/2" />
+                <col class="w-1/6" />
+                <col class="w-1/6" />
+                <col class="w-1/6" />
+              </colgroup>
+              <thead class="bg-gray-50">
+                <tr class="text-xs font-semibold text-gray-600">
+                  <th class="px-4 py-3 text-left">IME</th>
+                  <th class="px-4 py-3 text-left">POZ</th>
+                  <th class="px-4 py-3 text-right">CIJENA</th>
+                  <th class="px-4 py-3 text-right">BODOVI</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200">
+                <tr
+                  v-for="i in vezni"
+                  :key="i.id"
+                  @click="!isIgracDodan(i.id) && dodajIgraca(i)"
+                  :class="[
+                    isIgracDodan(i.id)
+                      ? 'cursor-not-allowed opacity-60 pointer-events-none'
+                      : 'text-black cursor-pointer',
+                  ]"
+                  class="hover:bg-gray-50"
+                >
+                  <td class="px-4 py-2">
+                    <span class="font-medium text-gray-800">{{ i.ime }}</span>
+                  </td>
+                  <td class="px-4 py-2">
+                    <span
+                      class="items-center rounded-full bg-yellow-50 px-2 py-0.5 text-xs font-medium text-yellow-700"
+                    >
+                      {{ i.pozicija }}
+                    </span>
+                  </td>
+                  <td class="px-4 py-2 text-right">{{ i.cijena }}M €</td>
+                  <td class="px-4 py-2 text-right">
+                    {{ i.bodovi }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div
+          class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow"
+        >
+          <div class="overflow-x-auto">
+            <table class="table-fixed min-w-full">
+              <colgroup>
+                <col class="w-1/2" />
+                <col class="w-1/6" />
+                <col class="w-1/6" />
+                <col class="w-1/6" />
+              </colgroup>
+              <thead class="bg-gray-50">
+                <tr class="text-xs font-semibold text-gray-600">
+                  <th class="px-4 py-3 text-left">IME</th>
+                  <th class="px-4 py-3 text-left">POZ</th>
+                  <th class="px-4 py-3 text-right">CIJENA</th>
+                  <th class="px-4 py-3 text-right">BODOVI</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200">
+                <tr
+                  v-for="i in napad"
+                  :key="i.id"
+                  @click="!isIgracDodan(i.id) && dodajIgraca(i)"
+                  :class="[
+                    isIgracDodan(i.id)
+                      ? 'cursor-not-allowed opacity-60 pointer-events-none'
+                      : 'text-black cursor-pointer',
+                  ]"
+                  class="hover:bg-gray-50"
+                >
+                  <td class="px-4 py-2">
+                    <span class="font-medium text-gray-800">{{ i.ime }}</span>
+                  </td>
+                  <td class="px-4 py-2">
+                    <span
+                      class="items-center rounded-full bg-red-50 px-2 py-0.5 text-xs font-medium text-red-700"
+                    >
+                      {{ i.pozicija }}
+                    </span>
+                  </td>
+                  <td class="px-4 py-2 text-right">{{ i.cijena }}M €</td>
+                  <td class="px-4 py-2 text-right">
+                    {{ i.bodovi }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="w-full md:w-1/2 min-w-0">
       <MojaEkipa
         :moja-odabrana-ekipa="mojaOdabranaEkipa"
         :odabrani-igraci="odabraniIgraci"

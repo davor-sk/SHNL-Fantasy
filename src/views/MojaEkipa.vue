@@ -86,113 +86,235 @@ async function updateEkipu() {
 </script>
 
 <template>
-  <div>
-    <slot />
-    <div
-      v-if="user"
-      class="flex flex-col border bg-gray-100 p-4 rounded-lg text-gray-700"
-    >
-      <div v-if="mojaOdabranaEkipa">
-        <form
-          class="flex flex-col justify-center gap-2 mt-2 p-4"
-          id="forma"
-          @submit.prevent="updateEkipu"
-        >
-          <p class="font-bold text-2xl">{{ mojaOdabranaEkipa.teamName }}</p>
-          <p
-            class="text-l font-bold"
-            :class="
-              mojaOdabranaEkipa.budzetUsed > 100
-                ? 'text-red-600 font-bold'
-                : 'text-green-600'
-            "
-          >
-            {{ mojaOdabranaEkipa.budzetUsed }} / 100M€
+  <div
+    v-if="user"
+    class="bg-white shadow p-4 rounded-xl text-gray-700 bg-[url(../assets/teren.png)] bg-center bg-cover h-screen overflow-hidden"
+  >
+    <div v-if="mojaOdabranaEkipa">
+      <form
+        class="flex flex-col gap-4 p-5"
+        id="forma"
+        @submit.prevent="updateEkipu"
+      >
+        <div class="flex items-center justify-between text-white mb-10">
+          <p class="text-3xl font-semibold">
+            {{ mojaOdabranaEkipa.teamName }}
           </p>
-          <p
-            class="text-l font-bold"
-            :class="
-              mojaOdabranaEkipa.igraci.length === 15
-                ? 'text-green-600'
-                : 'text-gray-700'
-            "
-          >
-            {{ mojaOdabranaEkipa.igraci.length }} / 15
-          </p>
-          <ul class="divide-y divide-gray-300 mt-2">
-            <li
-              v-for="i in mojaOdabranaEkipa.igraci"
-              :key="i.id"
-              class="flex justify-between items-center py-1"
+          <div class="flex items-center gap-2">
+            <span
+              class="rounded-full px-3 py-2 text-s font-medium"
+              :class="
+                mojaOdabranaEkipa.igraci.length === 15
+                  ? 'bg-green-50 text-green-700'
+                  : 'bg-gray-50 text-gray-700'
+              "
             >
-              <span>{{ i.ime }} ({{ i.pozicija }}) {{ i.bodovi }}</span>
+              {{ mojaOdabranaEkipa.igraci.length }} / 15
+            </span>
+            <span
+              class="rounded-full px-3 py-2 text-s font-medium"
+              :class="
+                mojaOdabranaEkipa.budzetUsed > 100
+                  ? 'bg-red-50 text-red-700'
+                  : 'bg-blue-50 text-blue-700'
+              "
+            >
+              {{ mojaOdabranaEkipa.budzetUsed }} / 100M €
+            </span>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-10 mb-20">
+          <div class="flex items-center justify-center gap-3 flex-wrap">
+            <div
+              v-for="i in mojaOdabranaEkipa.igraci.filter(
+                (i) => i.pozicija === 'GK'
+              )"
+              :key="i.id"
+            >
               <button
                 type="button"
                 @click="$emit('ukloniOdabranogIgraca', i)"
-                class="cursor-pointer"
+                class="cursor-pointer px-3 py-2 rounded-full bg-blue-50 text-blue-600 text-sm shadow hover:bg-blue-600 hover:text-white"
                 title="Ukloni igrača"
               >
-                <span class="font-semibold text-red-700">X</span>
+                {{ i.ime }} {{ i.cijena }}M
               </button>
-            </li>
-          </ul>
-          <button
-            type="submit"
-            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          >
-            Spremi ekipu
-          </button>
-        </form>
-      </div>
-      <div
-        class="flex flex-col border bg-gray-100 p-4 rounded-lg text-gray-700"
-        v-else
-      >
-        <form
-          class="flex flex-col justify-center gap-2 mt-2 p-4"
-          id="forma"
-          @submit.prevent="spremiEkipu"
+            </div>
+          </div>
+          <div class="flex items-center justify-center gap-3 flex-wrap">
+            <div
+              v-for="i in mojaOdabranaEkipa.igraci.filter(
+                (i) => i.pozicija === 'DEF'
+              )"
+              :key="i.id"
+            >
+              <button
+                type="button"
+                @click="$emit('ukloniOdabranogIgraca', i)"
+                class="cursor-pointer px-3 py-2 rounded-full bg-green-50 text-green-600 text-sm shadow hover:bg-green-600 hover:text-white"
+                title="Ukloni igrača"
+              >
+                {{ i.ime }} {{ i.cijena }}M
+              </button>
+            </div>
+          </div>
+          <div class="flex items-center justify-center gap-3 flex-wrap">
+            <div
+              v-for="i in mojaOdabranaEkipa.igraci.filter(
+                (i) => i.pozicija === 'MID'
+              )"
+              :key="i.id"
+            >
+              <button
+                type="button"
+                @click="$emit('ukloniOdabranogIgraca', i)"
+                class="cursor-pointer px-3 py-2 rounded-full bg-yellow-50 text-yellow-600 text-sm shadow hover:bg-yellow-600 hover:text-white"
+                title="Ukloni igrača"
+              >
+                {{ i.ime }} {{ i.cijena }}M
+              </button>
+            </div>
+          </div>
+          <div class="flex items-center justify-center gap-3 flex-wrap">
+            <div
+              v-for="i in mojaOdabranaEkipa.igraci.filter(
+                (i) => i.pozicija === 'FWD'
+              )"
+              :key="i.id"
+            >
+              <button
+                type="button"
+                @click="$emit('ukloniOdabranogIgraca', i)"
+                class="cursor-pointer px-3 py-2 rounded-full bg-red-50 text-red-600 text-sm shadow hover:bg-red-600 hover:text-white"
+                title="Ukloni igrača"
+              >
+                {{ i.ime }} {{ i.cijena }}M
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          :disabled="
+            mojaOdabranaEkipa.budzetUsed > 100 ||
+            mojaOdabranaEkipa.igraci.length !== 15
+          "
+          class="rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white shadow hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
         >
+          Spremi ekipu
+        </button>
+      </form>
+    </div>
+    <div v-else>
+      <form
+        class="flex flex-col gap-4 p-5"
+        id="forma"
+        @submit.prevent="spremiEkipu"
+      >
+        <div class="flex items-center justify-between text-white mb-10">
           <input
             id="teamName"
             v-model="teamName"
-            class="border rounded p-2 bg-white"
+            class="border rounded p-2 bg-white text-gray-700"
             type="text"
             placeholder="Unesite ime ekipe"
             required
           />
-          <span :class="brojIgraca === 15 ? 'text-green-600' : 'text-gray-700'">
-            {{ brojIgraca }}/15 igrača
-          </span>
-          <span
-            :class="budzet > 100 ? 'text-red-600 font-bold' : 'text-gray-700'"
-          >
-            {{ budzet }}/100M €
-          </span>
-          <ul class="divide-y divide-gray-300 mt-2">
-            <li
-              v-for="i in odabraniIgraci"
-              :key="i.id"
-              class="flex justify-between items-center py-1"
+          <div class="flex items-center gap-2">
+            <span
+              class="rounded-full px-3 py-2 text-s font-medium"
+              :class="
+                brojIgraca === 15
+                  ? 'bg-green-50 text-green-700'
+                  : 'bg-gray-50 text-gray-700'
+              "
             >
-              <span>{{ i.ime }} ({{ i.pozicija }}) {{ i.bodovi }}</span>
+              {{ brojIgraca }} / 15
+            </span>
+            <span
+              class="rounded-full px-3 py-2 text-s font-medium"
+              :class="
+                budzet > 100
+                  ? 'bg-red-50 text-red-700'
+                  : 'bg-blue-50 text-blue-700'
+              "
+            >
+              {{ budzet }} / 100M €
+            </span>
+          </div>
+        </div>
+        <div class="flex flex-col gap-10 mb-20">
+          <div class="flex items-center justify-center gap-3 flex-wrap">
+            <div
+              v-for="i in odabraniIgraci.filter((i) => i.pozicija === 'GK')"
+              :key="i.id"
+            >
               <button
+                type="button"
                 @click="$emit('ukloniIgraca', i)"
-                class="cursor-pointer"
+                class="cursor-pointer px-3 py-2 rounded-full bg-blue-50 text-blue-600 text-sm shadow hover:bg-blue-600 hover:text-white"
                 title="Ukloni igrača"
               >
-                <span class="font-semibold text-red-700">X</span>
+                {{ i.ime }} {{ i.cijena }}M
               </button>
-            </li>
-          </ul>
-          <button
-            type="submit"
-            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          >
-            Spremi ekipu
-          </button>
-        </form>
-      </div>
+            </div>
+          </div>
+          <div class="flex items-center justify-center gap-3 flex-wrap">
+            <div
+              v-for="i in odabraniIgraci.filter((i) => i.pozicija === 'DEF')"
+              :key="i.id"
+            >
+              <button
+                type="button"
+                @click="$emit('ukloniIgraca', i)"
+                class="cursor-pointer px-3 py-2 rounded-full bg-green-50 text-green-600 text-sm shadow hover:bg-green-600 hover:text-white"
+                title="Ukloni igrača"
+              >
+                {{ i.ime }} {{ i.cijena }}M
+              </button>
+            </div>
+          </div>
+          <div class="flex items-center justify-center gap-3 flex-wrap">
+            <div
+              v-for="i in odabraniIgraci.filter((i) => i.pozicija === 'MID')"
+              :key="i.id"
+            >
+              <button
+                type="button"
+                @click="$emit('ukloniIgraca', i)"
+                class="cursor-pointer px-3 py-2 rounded-full bg-yellow-50 text-yellow-600 text-sm shadow hover:bg-yellow-600 hover:text-white"
+                title="Ukloni igrača"
+              >
+                {{ i.ime }} {{ i.cijena }}M
+              </button>
+            </div>
+          </div>
+          <div class="flex items-center justify-center gap-3 flex-wrap">
+            <div
+              v-for="i in odabraniIgraci.filter((i) => i.pozicija === 'FWD')"
+              :key="i.id"
+            >
+              <button
+                type="button"
+                @click="$emit('ukloniIgraca', i)"
+                class="cursor-pointer px-3 py-2 rounded-full bg-red-50 text-red-600 text-sm shadow hover:bg-red-600 hover:text-white"
+                title="Ukloni igrača"
+              >
+                {{ i.ime }} {{ i.cijena }}M
+              </button>
+            </div>
+          </div>
+        </div>
+        <button
+          type="submit"
+          :disabled="budzet > 100 || brojIgraca !== 15 || !teamName"
+          class="rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white shadow hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        >
+          Spremi ekipu
+        </button>
+      </form>
     </div>
   </div>
 </template>
