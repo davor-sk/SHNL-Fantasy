@@ -26,6 +26,7 @@ export const useAuthStore = defineStore("auth", () => {
   async function logout() {
     await signOut(auth);
     user.value = null;
+    role.value = "";
   }
 
   return { user, logout, role, loading };

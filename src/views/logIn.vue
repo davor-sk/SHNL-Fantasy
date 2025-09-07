@@ -3,7 +3,9 @@ import { ref } from "vue";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
 import { auth, db } from "@/firebase.js";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const email = ref("");
 const password = ref("");
 const displayName = ref("");
@@ -17,15 +19,17 @@ const register = async () => {
       password.value
     );
 
-    await updateProfile(userCredential.user, {
-      displayName: displayName.value,
-    });
-
     await setDoc(doc(db, "users", userCredential.user.uid), {
       email: email.value,
       displayName: displayName.value,
       role: "user",
     });
+
+    await updateProfile(userCredential.user, {
+      displayName: displayName.value,
+    });
+
+    router.push({ path: "/biranje-ekipe" });
 
     response.value.error = false;
     response.value.message = "Korisnik registriran!";

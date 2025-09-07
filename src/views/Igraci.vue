@@ -67,6 +67,7 @@ async function loadPlayers() {
     const klub = pod.Klub;
     const klubId = pod.KlubID;
     const cijena = pod.Cijena;
+    const bodovi = pod.Bodovi;
     return {
       id: i.id,
       ime,
@@ -74,6 +75,7 @@ async function loadPlayers() {
       klub,
       klubId,
       cijena,
+      bodovi,
     };
   });
 }
@@ -214,7 +216,7 @@ function ukloniOdabranogIgraca(igrac) {
                 ? 'text-gray-400 cursor-not-allowed'
                 : 'text-black cursor-pointer',
             ]"
-            >{{ i.ime }} {{ i.pozicija }} {{ i.cijena }}M €</span
+            >{{ i.ime }} {{ i.pozicija }} {{ i.cijena }}M € {{ i.bodovi }}</span
           >
         </li>
       </ol>
@@ -228,7 +230,7 @@ function ukloniOdabranogIgraca(igrac) {
                 ? 'text-gray-400 cursor-not-allowed'
                 : 'text-black cursor-pointer',
             ]"
-            >{{ i.ime }} {{ i.pozicija }} {{ i.cijena }}M €</span
+            >{{ i.ime }} {{ i.pozicija }} {{ i.cijena }}M € {{ i.bodovi }}</span
           >
         </li>
       </ol>
@@ -242,7 +244,7 @@ function ukloniOdabranogIgraca(igrac) {
                 ? 'text-gray-400 cursor-not-allowed'
                 : 'text-black cursor-pointer',
             ]"
-            >{{ i.ime }} {{ i.pozicija }} {{ i.cijena }}M €</span
+            >{{ i.ime }} {{ i.pozicija }} {{ i.cijena }}M € {{ i.bodovi }}</span
           >
         </li>
       </ol>
@@ -256,7 +258,7 @@ function ukloniOdabranogIgraca(igrac) {
                 ? 'text-gray-400 cursor-not-allowed'
                 : 'text-black cursor-pointer',
             ]"
-            >{{ i.ime }} {{ i.pozicija }} {{ i.cijena }}M €</span
+            >{{ i.ime }} {{ i.pozicija }} {{ i.cijena }}M € {{ i.bodovi }}</span
           >
         </li>
       </ol>

@@ -1,8 +1,9 @@
 <script setup>
 import { ref } from "vue";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/firebase.js";
+import { auth, db } from "@/firebase.js";
 import { useRouter } from "vue-router";
+import { doc, getDoc } from "firebase/firestore";
 
 const router = useRouter();
 const email = ref("");
@@ -15,6 +16,15 @@ const login = async () => {
       email.value,
       password.value
     );
+    const snap = await getDoc(doc(db, "users", userCredential.user.uid));
+    const role = snap.exists() ? snap.data().role : "prazno";
+    console.log("rola je:", role);
+    if (role == "user") {
+      router.push({ path: "/biranje-ekipe" });
+    } else if (role == "admin") {
+      router.push({ path: "/admin" });
+    }
+
     response.value.error = false;
     response.value.message =
       "Korisnik prijavljen: " + JSON.stringify(userCredential.user);
@@ -22,7 +32,6 @@ const login = async () => {
     response.value.error = true;
     response.value.message = "Greška pri prijavi!";
   }
-  router.push({ path: "/biranje-ekipe" });
 };
 </script>
 <template>

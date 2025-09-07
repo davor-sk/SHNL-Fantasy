@@ -125,7 +125,7 @@ async function updateEkipu() {
               :key="i.id"
               class="flex justify-between items-center py-1"
             >
-              <span>{{ i.ime }} ({{ i.pozicija }})</span>
+              <span>{{ i.ime }} ({{ i.pozicija }}) {{ i.bodovi }}</span>
               <button
                 type="button"
                 @click="$emit('ukloniOdabranogIgraca', i)"
@@ -175,7 +175,7 @@ async function updateEkipu() {
               :key="i.id"
               class="flex justify-between items-center py-1"
             >
-              <span>{{ i.ime }} ({{ i.pozicija }})</span>
+              <span>{{ i.ime }} ({{ i.pozicija }}) {{ i.bodovi }}</span>
               <button
                 @click="$emit('ukloniIgraca', i)"
                 class="cursor-pointer"

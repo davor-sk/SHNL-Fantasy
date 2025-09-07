@@ -1,11 +1,22 @@
 <script setup>
 import { RouterLink, RouterView } from "vue-router";
 import { useAuthStore } from "@/stores/auth.js";
+import { storeToRefs } from "pinia";
+import { useRouter } from "vue-router";
+import { computed } from "vue";
 
+const router = useRouter();
 const authStore = useAuthStore();
+const { user, role } = storeToRefs(authStore);
+console.log("user je koji", role);
+
+const displayName = computed(
+  () => user.value?.displayName || user.value?.email || ""
+);
 
 const logout = async () => {
   await authStore.logout();
+  router.push("/");
 };
 </script>
 
@@ -16,15 +27,27 @@ const logout = async () => {
     <h1 class="text-3xl text-white font-bold">SHNL Fantasy</h1>
     <nav>
       <RouterLink to="/">Home</RouterLink>
-      <RouterLink to="/biranje-ekipe">Biranje ekipe</RouterLink>
-      <span v-if="!authStore.user">
-        <RouterLink to="/registracija">Registracija</RouterLink>
-        <RouterLink to="/prijava">Prijava</RouterLink>
+      <span v-if="!role || role == 'user'">
+        <RouterLink to="/biranje-ekipe">Biranje ekipe</RouterLink>
+        <span v-if="!user">
+          <RouterLink to="/registracija">Registracija</RouterLink>
+          <RouterLink to="/prijava">Prijava</RouterLink>
+        </span>
+        <span v-else-if="user">
+          <span class="text-white px-3 border-s">{{ displayName }}</span>
+
+          <button
+            @click="logout"
+            class="text-white hover:text-black cursor-pointer border-s ps-3"
+          >
+            Odjavi se
+          </button>
+        </span>
       </span>
-      <span v-else-if="authStore.user">
-        <span class="text-white px-3 border-s">{{
-          authStore.user.displayName
-        }}</span>
+      <span v-else-if="user && role === 'admin'">
+        <RouterLink to="/admin">Dodavanje bodova</RouterLink>
+        <span class="text-white px-3 border-s">{{ displayName }}</span>
+
         <button
           @click="logout"
           class="text-white hover:text-black cursor-pointer border-s ps-3"
