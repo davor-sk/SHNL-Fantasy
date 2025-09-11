@@ -1,29 +1,27 @@
 # SHNL-Fantasy
 
-This template should help get you started developing with Vue 3 in Vite.
+Aplikaciju izradio: Davor Škiljić
 
-## Recommended IDE Setup
+[Fakultet informatike u Puli](https://fipu.unipu.hr/)
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+Kolegij: [Programsko inženjerstvo](https://fiputreca.notion.site/Programsko-in-enjerstvo-e353945331df468e8382cdad1e91c4b8)
 
-## Customize configuration
+Mentor: [doc. dr. sc. Nikola Tanković](https://fiputreca.notion.site/Kontakt-stranica-875574d1b92248b1a8e90dae52cd29a9)
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+Aplikacija koja omogućuje korisnicima registraciju, odabir omiljenog kluba te slaganje vlastite Fantasy momčadi uz zadana pravila (budžet 100 M €, max 3 igrača iz istog kluba). Korisnik se naknadno može prijaviti i uređivati momčad.
 
-## Project Setup
+Ključne funkcionalnosti:
+- Registracija/prijava korisnika
+- Odabir omiljene ekipe
+- Pregledavanje klubova i igrača
+- Spremanje i kasnije uređivanje momčadi
+- Admin dodaje bodove
+- Kreiranje svoje momčadi uz validacije:
+  -   Ukupna cijena do 100M €
+  -   Najviše 3 igrača iz istog kluba
+ 
+[Prototip](https://www.figma.com/design/5YpWgIucu9VGNCXcp3QWm1/SHNL-Fantasy?node-id=42-222&p=f&t=Dxaww76WqfU4wfAk-0)
 
-```sh
-npm install
-```
 
-### Compile and Hot-Reload for Development
 
-```sh
-npm run dev
-```
 
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
