@@ -22,7 +22,7 @@ Ključne funkcionalnosti:
  
 [Prototip](https://www.figma.com/design/5YpWgIucu9VGNCXcp3QWm1/SHNL-Fantasy?node-id=42-222&p=f&t=Dxaww76WqfU4wfAk-0)
 
-[Netlify](https://shnl-fantasy.netlify.app/biranje-ekipe)
+[Netlify]([https://shnl-fantasy.netlify.app/biranje-ekipe](https://shnl-fantasy.netlify.app/))
 
 
 
