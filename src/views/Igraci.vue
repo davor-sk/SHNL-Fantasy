@@ -158,11 +158,34 @@ function dodajIgraca(igrac) {
     console.log("budzet:", budzet.value);
     odabraniIgraci.value.push(igrac);
   } else {
+    if (pozicija in brojacPozicija) {
+      if (
+        pozicija == "GK" &&
+        mojaOdabranaEkipa.value.brojPozicija[pozicija] > 1
+      )
+        return;
+      if (
+        pozicija == "DEF" &&
+        mojaOdabranaEkipa.value.brojPozicija[pozicija] > 4
+      )
+        return;
+      if (
+        pozicija == "MID" &&
+        mojaOdabranaEkipa.value.brojPozicija[pozicija] > 4
+      )
+        return;
+      if (
+        pozicija == "FWD" &&
+        mojaOdabranaEkipa.value.brojPozicija[pozicija] > 2
+      )
+        return;
+    }
     if (klubId in klubBrojac) {
       if (mojaOdabranaEkipa.value.brojacKlubova[klubId] > 2) return;
       mojaOdabranaEkipa.value.brojacKlubova[klubId]++;
       console.log(`${klubId} =`, mojaOdabranaEkipa.value.brojacKlubova[klubId]);
     }
+
     mojaOdabranaEkipa.value.brojPozicija[pozicija]++;
     console.log(
       `${pozicija} =`,

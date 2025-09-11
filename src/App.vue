@@ -26,7 +26,7 @@ const logout = async () => {
   >
     <h1 class="text-3xl text-white font-bold">SHNL Fantasy</h1>
     <nav>
-      <RouterLink to="/">Home</RouterLink>
+      <RouterLink to="/">Naslovna</RouterLink>
       <span v-if="!role || role == 'user'">
         <RouterLink to="/biranje-ekipe">Biranje ekipe</RouterLink>
         <span v-if="!user">
